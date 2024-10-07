@@ -56,7 +56,7 @@
             </tr>
             <%}%>
         </table>
-        <form action="ProductURL" method="post">
+<!--        <form action="ProductURL" method="post">
             <input type="hidden" name="service" value="insertProduct"/>
             <table>
                 <caption>Insert Product</caption>
@@ -133,6 +133,6 @@
     <tr></tr>
     <tr></tr>
     <tr></tr>
-    <tr></tr>
+    <tr></tr>-->
 </body>
 </html>
