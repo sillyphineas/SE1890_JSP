@@ -25,6 +25,7 @@
             </p>
         </form>
         <p> <a href="ProductURL?service=insertProduct"> insert Product </a></p>
+        <p align="right"> <a href="CartURL?service=showCart"> Show Cart </a></p>
         <table border="1">
             <caption style="color:red;font-size:40px"><%=title%></caption>
             <th>ProductID</th>
@@ -39,6 +40,7 @@
             <th>Discontinued</th>
             <th>Update</th>
             <th>Delete</th>
+            <th>Add To Cart</th>
             <%for (Product pro : vector) {%>
             <tr>
                 <td><%=pro.getProductID()%></td>
@@ -51,88 +53,11 @@
                 <td><%=pro.getUnitsOnOrder()%></td>
                 <td><%=pro.getReorderLevel()%></td>
                 <td><%=pro.isDiscontinued()%></td>
-                <td></td>
-                <td></td>
+                <td><a href="ProductURL?service=updateProduct&pid=<%=pro.getProductID()%>">Update product</td>
+                <td><a href="ProductURL?service=deleteProduct&pi<%=pro.getProdud=<%=pro.getProductID()%>">Delete product</a></td>
+                <td><a href="CartURL?service=add2cart&pid=<%=pro.getProductID()%>">Add to cart</a></td>
             </tr>
             <%}%>
         </table>
-<!--        <form action="ProductURL" method="post">
-            <input type="hidden" name="service" value="insertProduct"/>
-            <table>
-                <caption>Insert Product</caption>
-                <tr>
-                    <td><label for="ProductID">Product</label></td>
-                    <td><input type="text" name="ProductID" id="ProductID" readonly></td>
-                </tr>
-                <tr>
-                    <td><label for="ProductName">ProductName</label></td>
-                    <td><input type="text" name="ProductName" id="ProductName"></td>
-                </tr>
-                <tr>
-                    <td><label for="SupplierID">Supplier</label></td>
-                    <td><select name="SupplierID" id="SupplierID">
-                            <option value="1">Exotic Liquids</option>
-                            <option value="2">New Orleans Cajun Delights</option>
-                            <option value="3">Grandma Kelly's Homestead</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="CategoryID">Category</label></td>
-                    <td><select name="CategoryID" id="CategoryID">
-                            <option value="1">Beverages</option>
-                            <option value="2">Condiments</option>
-                            <option value="3">Confections</option>
-                        </select>
-
-                    </td>
-                </tr>
-                <tr>
-                    <td><label for="QuantityPerUnit">QuantityPerUnit</label></td>
-                    <td><input type="text" name="QuantityPerUnit" id="QuantityPerUnit"></td>
-                </tr>
-                <tr>
-                    <td><label for="UnitPrice">UnitPrice</label></td>
-                    <td><input type="text" name="UnitPrice" id="UnitPrice"></td>
-                </tr>
-                <tr>
-                    <td><label for="UnitsInStock">UnitsInStock</label></td>
-                    <td><input type="text" name="UnitsInStock" id="UnitsInStock"></td>
-                </tr>
-                <tr>
-                    <td><label for="UnitsOnOrder">UnitsOnOrder</label></td>
-                    <td><input type="text" name="UnitsOnOrder" id="UnitsOnOrder"></td>
-                </tr>
-                <tr>
-                    <td><label for="ReorderLevel">ReorderLevel</label></td>
-                    <td><input type="text" name="ReorderLevel" id="ReorderLevel"></td>
-                </tr>
-                <tr>
-                    <td><label for="Discontinued">Discontinued</label></td>
-                    <td>
-                        <input type="radio" name="Discontinued" id="Discontinued" value="0">Discontinued
-                        <input type="radio" name="Discontinued" id="Discontinued" value="1">Continued
-                    </td>
-                </tr>
-                <tr>
-                    <td><input type="submit" value="insertProduct" name="submit"></td>
-                    <td><input type="reset" value="Clear"></td>
-                </tr>
-            </table>
-        </form>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>
-    <tr></tr>-->
-</body>
+    </body>
 </html>

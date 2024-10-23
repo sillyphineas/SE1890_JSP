@@ -5,7 +5,9 @@
 
 package Controller;
 
+import entity.Bill;
 import entity.Orders;
+import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,7 +15,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.ResultSet;
 import java.util.Vector;
+import model.DAOBill;
 import model.DAOOrders;
 
 /**
@@ -39,7 +43,9 @@ public class OrdersController extends HttpServlet {
             /* TODO output your page here. You may use following sample code. */
 
             String service = request.getParameter("service");
-
+            if (service == null) {
+                service = "listAllOrders";
+            }
             if (service.equals("deleteOrders")) {
                 dao.deleteOrders(Integer.parseInt(request.getParameter("oid")));
                 response.sendRedirect("OrdersControllerURL?service=listAllOrders");
@@ -47,65 +53,53 @@ public class OrdersController extends HttpServlet {
 
             if (service.equals("insertOrders")) {
                 // Lấy dữ liệu từ request
+                String submit = request.getParameter("submit");
+                if (submit == null) {
+                    ResultSet rsEmp = dao.getData("select [EmployeeID],[LastName] from [dbo].[Employees]");
+                    ResultSet rsCus = dao.getData("select [CustomerID],[CompanyName] from [dbo].[Customers]");
+                    ResultSet rsShip = dao.getData("select [ShipperID],[CompanyName] from [dbo].[Shippers]");
+                    request.setAttribute("rsEmp", rsEmp);
+                    request.setAttribute("rsCus", rsCus);
+                    request.setAttribute("rsShip", rsShip);
+                    RequestDispatcher rd = request.getRequestDispatcher("/jsp/insertOrders.jsp");
+                    rd.forward(request, response);
+                } else {
+                    String CustomerID = request.getParameter("CustomerID");
+                    String EmployeeID = request.getParameter("EmployeeID");
+                    String OrderDate = request.getParameter("OrderDate");
+                    String RequiredDate = request.getParameter("RequiredDate");
+                    String ShippedDate = request.getParameter("ShippedDate");
+                    String ShipVia = request.getParameter("ShipVia");
+                    String Freight = request.getParameter("Freight");
+                    String ShipName = request.getParameter("ShipName");
+                    String ShipAddress = request.getParameter("ShipAddress");
+                    String ShipCity = request.getParameter("ShipCity");
+                    String ShipRegion = request.getParameter("ShipRegion");
+                    String ShipPostalCode = request.getParameter("ShipPostalCode");
+                    String ShipCountry = request.getParameter("ShipCountry");
 
-                String CustomerID = request.getParameter("CustomerID");
-                String EmployeeID = request.getParameter("EmployeeID");
-                String OrderDate = request.getParameter("OrderDate");
-                String RequiredDate = request.getParameter("RequiredDate");
-                String ShippedDate = request.getParameter("ShippedDate");
-                String ShipVia = request.getParameter("ShipVia");
-                String Freight = request.getParameter("Freight");
-                String ShipName = request.getParameter("ShipName");
-                String ShipAddress = request.getParameter("ShipAddress");
-                String ShipCity = request.getParameter("ShipCity");
-                String ShipRegion = request.getParameter("ShipRegion");
-                String ShipPostalCode = request.getParameter("ShipPostalCode");
-                String ShipCountry = request.getParameter("ShipCountry");
+                    // check
+                    if (CustomerID.equals("")) {
+                        out.print("CustomerID must not be empty");
+                        return;
+                    }
 
-                // check
-                if (CustomerID.equals("")) {
-                    out.print("CustomerID must not be empty");
-                    return;
+                    // convert value
+                    int EmployeeId = Integer.parseInt(EmployeeID);
+                    int ShipViA = Integer.parseInt(ShipVia);
+                    double FreighT = Double.parseDouble(Freight);
+
+                    // tạo đối tượng mới
+
+                    //Orders or = new Orders(ShipViA, CustomerID, EmployeeId, OrderDate, RequiredDate, ShippedDate, ShipViA, FreighT, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry);
+                    Orders or = new Orders(CustomerID, EmployeeId, OrderDate, RequiredDate, ShippedDate, ShipViA, FreighT, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry);
+                    // Thêm đơn hàng vào database
+                    int n = dao.insertOrders(or);
+                    response.sendRedirect("OrdersControllerURL?service=listAllOrders");
                 }
-
-                // convert value
-                int EmployeeId = Integer.parseInt(EmployeeID);
-                int ShipViA = Integer.parseInt(ShipVia);
-                double FreighT = Double.parseDouble(Freight);
-                
-                // tạo đối tượng mới
-                
-                //Orders or = new Orders(ShipViA, CustomerID, EmployeeId, OrderDate, RequiredDate, ShippedDate, ShipViA, FreighT, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry);
-                Orders or = new Orders(CustomerID, EmployeeId, OrderDate, RequiredDate, ShippedDate, ShipViA, FreighT, ShipName, ShipAddress, ShipCity, ShipRegion, ShipPostalCode, ShipCountry);
-                // Thêm đơn hàng vào database
-                int n = dao.insertOrders(or);
-                response.sendRedirect("OrdersControllerURL?service=listAllOrders");
-                
             }
-            System.out.println(service);
 
             if (service.equals("listAllOrders")) {
-
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title>Servlet Orders</title>");
-                out.println("</head>");
-                out.println("<body>");
-
-                out.print("<form action=\"OrdersControllerURL\" method=\"get\">\n"
-                        + "  <p>\n"
-                        + "    Search Name : <input type=\"text\" name=\"pname\" id=\"\">\n"
-                        + "    <input type=\"submit\" name=\"submit\" value=\"Search\">\n"
-                        + "    <input type=\"reset\" value=\"Clear\">\n"
-                        + "    <input type=\"hidden\" name=\"service\" value=\"listAllOrders\">\n"
-                        + "  </p>\n"
-                        + "\n"
-                        + "</form>");
-
-                //link insert
-                out.print("<p><a href=\"HTML/insertOrders.html\">Insert Orders</a></p>");
-
                 String sql = "SELECT * FROM Orders";
                 String submit = request.getParameter("submit");
                 if (submit == null) {
@@ -116,55 +110,43 @@ public class OrdersController extends HttpServlet {
                             + "Where CustomerID like '%" + pname + "%'";
                 }
                 Vector<Orders> vector = dao.getOrders(sql);
-
-                out.println("<table border=\"1\">\n"
-                        + "  \n"
-                        + "  <tr>\n"
-                        + "    <th>OrderID</th>\n"
-                        + "    <th>CustomeerID</th>\n"
-                        + "    <th>EmployeeID</th>\n"
-                        + "    <th>OrderDate</th>\n"
-                        + "    <th>RequiredDate</th>\n"
-                        + "    <th>ShippedDate</th>\n"
-                        + "    <th>ShipVia</th>\n"
-                        + "    <th>Freight</th>\n"
-                        + "    <th>ShipName</th>\n"
-                        + "    <th>ShipAddress</th>\n"
-                        + "    <th>ShipCity</th>\n"
-                        + "    <th>ShipRegion</th>\n"
-                        + "    <th>ShipPostalCode</th>\n"
-                        + "    <th>ShipCountry</th>\n"
-                        + "    <th>Update</th>"
-                        + "    <th>Delete</th>"
-                        + "    <th></th>\n"
-                        + "  </tr>");
-
-                for (Orders orders : vector) {
-                    out.println("<tr>\n"
-                            + "  <td>" + orders.getOrderID() + "</td>"
-                            + "  <td>" + orders.getCustomerID() + "</td>"
-                            + "  <td>" + orders.getEmployeeID() + "</td>"
-                            + "  <td>" + orders.getOrderDate() + "</td>"
-                            + "  <td>" + orders.getRequiredDate() + "</td>"
-                            + "  <td>" + orders.getShippedDate() + "</td>"
-                            + "  <td>" + orders.getShipVia() + "</td>"
-                            + "  <td>" + orders.getFreight() + "</td>"
-                            + "  <td>" + orders.getShipName() + "</td>"
-                            + "  <td>" + orders.getShipAddress() + "</td>"
-                            + "  <td>" + orders.getShipCity() + "</td>"
-                            + "  <td>" + orders.getShipRegion() + "</td>"
-                            + "  <td>" + orders.getShipPostalCode() + "</td>"
-                            + "  <td>" + orders.getShipCountry() + "</td>"
-                            + "  <td></td>"
-                           + "<td><a href=\"OrdersControllerURL?service=deleteOrders&oid="+orders.getOrderID()+"\">Delete</a></td>\n"
-                            + "</tr>");
-
-                }
-
-                out.println("</table>");
-                out.println("<h1>Servlet Orders at " + request.getContextPath() + "</h1>");
-                out.println("</body>");
-                out.println("</html>");
+                RequestDispatcher rd = request.getRequestDispatcher("/jsp/displayOrders.jsp");
+                //set data
+                request.setAttribute("data", vector);
+                request.setAttribute("title", "Orders manager");
+                rd.forward(request, response);
+            }
+            
+            if (service.equals("checkCus")) {
+                String CustomerID = request.getParameter("CusId");
+                String sql = "SELECT o.OrderID, o.CustomerID, o.EmployeeID, o.OrderDate, o.RequiredDate, o.ShippedDate, o.ShipVia, \n"
+                        + "o.Freight, o.ShipName, o.ShipAddress, o.ShipCity, o.ShipRegion, o.ShipPostalCode, o.ShipCountry\n"
+                        + "FROM Orders AS o\n"
+                        + "LEFT JOIN [dbo].[Customers] AS c\n"
+                        + "ON c.CustomerID = o.CustomerID WHERE c.CustomerID = '" + CustomerID + "'";
+                Vector<Orders> listOrder = dao.getOrders(sql);
+                RequestDispatcher rd = request.getRequestDispatcher("/jsp/displayOrders.jsp");
+                //set data
+                request.setAttribute("data", listOrder);
+                request.setAttribute("title", "Orders manager");
+                rd.forward(request, response);
+            }
+            
+            if (service.equals("GenBill")) {
+                int OrderId = Integer.parseInt(request.getParameter("orderId"));
+                String sql = "select o.OrderID, o.OrderDate, o.RequiredDate, c.ContactName, e.LastName, p.ProductID, p.ProductName,\n"
+                        + "od.UnitPrice, od.Quantity, od.Discount\n"
+                        + "from [dbo].[Orders] as o join [dbo].[Customers] as c on o.CustomerID = c.CustomerID\n"
+                        + "join Employees as e on o.EmployeeID = e.EmployeeID\n"
+                        + "join [dbo].[Order Details] as od on o.OrderID = od.OrderID\n"
+                        + "join Products as p on od.ProductID = p.ProductID\n"
+                        + "where o.OrderID = '"+ OrderId +"'";
+                DAOBill daoB = new DAOBill();
+                Vector<Bill> listBill = daoB.getBill(sql);
+                RequestDispatcher rd = request.getRequestDispatcher("/jsp/PaymentPage.jsp");
+                //set data
+                request.setAttribute("data", listBill);
+                rd.forward(request, response);
             }
         }
     }

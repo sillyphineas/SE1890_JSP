@@ -98,7 +98,7 @@ public class DAOCategories extends DBConnection{
                 String CategoryName = rs.getString("CategoryName");
                 String Description = rs.getString("Description");
                 String Picture = rs.getString("Picture");
-                Categories cat = new Categories(CategoryID,CategoryName, Description, Picture);
+                Categories cat = new Categories(CategoryID,CategoryName,Description,Picture);
                 vector.add(cat);
             }
         } catch (SQLException ex) {

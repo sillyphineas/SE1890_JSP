@@ -35,6 +35,13 @@ public class Customer {
         this.Fax = Fax;
     }
 
+    public Customer(String Phone, String Fax) {
+        this.Phone = Phone;
+        this.Fax = Fax;
+    }
+    
+    
+
     public Customer() {
     }
 
@@ -124,6 +131,11 @@ public class Customer {
 
     public void setFax(String Fax) {
         this.Fax = Fax;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" + "CustomerID=" + CustomerID + ", CompanyName=" + CompanyName + ", ContactName=" + ContactName + ", ContactTitle=" + ContactTitle + ", Address=" + Address + ", City=" + City + ", Region=" + Region + ", PostalCode=" + PostalCode + ", Country=" + Country + ", Phone=" + Phone + ", Fax=" + Fax + '}';
     }
     
     

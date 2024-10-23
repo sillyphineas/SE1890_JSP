@@ -23,15 +23,16 @@ public class DAORegion extends DBConnection {
         String sql = """
                      INSERT INTO [dbo].[Region]
                                 ([RegionID]
-                                ,[RegionDescription])
+                                ,[RegionDescription],[RegionStatus])
                           VALUES
                                 (?
-                                ,?)""";
+                                ,?,?)""";
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             
             pre.setInt(1, r.getRegionID());
             pre.setString(2, r.getRegionDescription());
+            pre.setInt(3, r.getRegionStatus());
             
             n = pre.executeUpdate();
         } catch (SQLException ex) {
@@ -93,9 +94,9 @@ public class DAORegion extends DBConnection {
             while(rs.next()) {
                 int RegionID = rs.getInt("RegionID");
                 String RegionDescription = rs.getString("RegionDescription");
+                int RegionStatus = rs.getInt("RegionStatus");
                 
-                
-                Region r = new Region(RegionID, RegionDescription);
+                Region r = new Region(RegionID, RegionDescription, RegionStatus);
                 vector.add(r);
             }
         } catch (SQLException ex) {

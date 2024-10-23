@@ -26,13 +26,13 @@ public class DAOOrderDetails extends DBConnection{
                                 ,[ProductID]
                                 ,[UnitPrice]
                                 ,[Quantity]
-                                ,[Discount])
+                                ,[Discount],[OrderDetailStatus])
                           VALUES
                                 (?
                                 ,?
                                 ,?
                                 ,?
-                                ,?)""";
+                                ,?,?)""";
         try {
             PreparedStatement pre = conn.prepareStatement(sql);
             
@@ -41,6 +41,7 @@ public class DAOOrderDetails extends DBConnection{
             pre.setDouble(3, od.getUnitPrice());
             pre.setInt(4, od.getQuantity());
             pre.setDouble(5, od.getDiscount());
+            pre.setInt(6, od.getOrderDetailStatus());
             
             n = pre.executeUpdate();
         } catch (SQLException ex) {

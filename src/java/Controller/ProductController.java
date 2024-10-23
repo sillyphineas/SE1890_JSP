@@ -85,6 +85,50 @@ public class ProductController extends HttpServlet {
                 
                 
             }
+            if (service.equals("updateProduct")) {
+                String submit = request.getParameter("submit");
+                if (submit == null) {
+                    int pid = Integer.parseInt(request.getParameter("pid"));
+                    Vector<Product> vector = dao.getProducts("select * from Products where ProductID = " + pid);
+                    request.setAttribute("vector", vector);
+                    
+                    ResultSet rsSup = dao.getData("select [SupplierID],[CompanyName] from [dbo].[Suppliers]");
+                    ResultSet rsCate = dao.getData("select [CategoryID],[CategoryName] from [dbo].[Categories]");
+                    request.setAttribute("rsSup", rsSup);
+                    request.setAttribute("rsCate", rsCate);
+                    RequestDispatcher rd = request.getRequestDispatcher("/jsp/updateProduct.jsp");
+                    rd.forward(request, response);
+                } else {
+                    String ProductID = request.getParameter("ProductID");
+                    String ProductName = request.getParameter("ProductName");
+                    String SupplierID = request.getParameter("SupplierID");
+                    String CategoryID = request.getParameter("CategoryID");
+                    String QuantityPerUnit = request.getParameter("QuantityPerUnit");
+                    String UnitPrice = request.getParameter("UnitPrice");
+                    String UnitsInStock = request.getParameter("UnitsInStock");
+                    String UnitsOnOrder = request.getParameter("UnitsOnOrder");
+                    String ReorderLevel = request.getParameter("ReorderLevel");
+                    String Discontinued = request.getParameter("Discontinued");
+                    //check data(double check)
+                    if (ProductName.equals("")) {
+                        out.print("product name is not empty");
+                    }
+                    //convert
+                    int ProductId = Integer.parseInt(ProductID);
+                    int SupplierId = Integer.parseInt(SupplierID);
+                    int CategoryId = Integer.parseInt(CategoryID);
+                    double UnitPricE = Double.parseDouble(UnitPrice);
+                    int UnitsInStocK = Integer.parseInt(UnitsInStock);
+                    int UnitsOnOrdeR = Integer.parseInt(UnitsOnOrder);
+                    int ReorderLeveL = Integer.parseInt(ReorderLevel);
+                    boolean DiscontinueD = Integer.parseInt(Discontinued) == 1 ? true : false;
+                    Product pro = new Product(ProductId ,ProductName, SupplierId, CategoryId, QuantityPerUnit, UnitPricE, UnitsInStocK, UnitsOnOrdeR, ReorderLeveL, DiscontinueD);
+                    int n = dao.updateProduct(pro);
+                    response.sendRedirect("ProductURL?service=listAllProducts");
+                }
+                
+                
+            }
             if (service.equals("listAllProducts")) {
                
                 String sql = "select * from Products";
@@ -103,9 +147,18 @@ public class ProductController extends HttpServlet {
                 request.setAttribute("title", "Product manager");
                 rd.forward(request, response);
             }
+            
+            if (service.equals("DisplayProducts")) {
+                int CategoryID = Integer.parseInt(request.getParameter("CategoryID"));
+                String sql = "select * from Products as p where p.CategoryID = " + CategoryID;
+                Vector<Product> vector = dao.getProducts(sql);
+                RequestDispatcher rd = request.getRequestDispatcher("/jsp/displayProduct.jsp");
+                //set data
+                request.setAttribute("data", vector);
+                request.setAttribute("title", "Product manager");
+                rd.forward(request, response);
+            }
         }
-
-           
     } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

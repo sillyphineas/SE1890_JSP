@@ -21,6 +21,13 @@ public class Categories {
         this.Picture = Picture;
     }
 
+    public Categories(int CategoryID, String CategoryName) {
+        this.CategoryID = CategoryID;
+        this.CategoryName = CategoryName;
+    }
+
+    
+    
     public Categories(String CategoryName, String Description, String Picture) {
         this.CategoryName = CategoryName;
         this.Description = Description;

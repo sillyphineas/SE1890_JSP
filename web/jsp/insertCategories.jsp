@@ -1,17 +1,19 @@
+<%-- 
+    Document   : insertCategories
+    Created on : Oct 13, 2024, 8:57:19 PM
+    Author     : HP
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<!--
-Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
-Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
--->
 <html>
     <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
     </head>
     <body>
         <div>
-            <form action="../CategoriesController" method="post">
+            <form action="CategoriesController" method="post">
                 <input type="hidden" name="service" value="insertCategories">
 
                 <table>
@@ -50,9 +52,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
 
                 </table>
             </form>
-
-
-
         </div>
     </body>
 </html>

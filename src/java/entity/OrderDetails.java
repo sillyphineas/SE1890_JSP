@@ -14,20 +14,26 @@ public class OrderDetails {
     private double UnitPrice;
     private int Quantity;
     private double Discount;
+    private int OrderDetailStatus;
 
     public OrderDetails() {
     }
 
-    public OrderDetails(int OrderID, int ProductID, double UnitPrice, int Quantity, double Discount) {
+    public OrderDetails(int ProductID, double UnitPrice, int Quantity, double Discount, int OrderDetailStatus) {
+        this.ProductID = ProductID;
+        this.UnitPrice = UnitPrice;
+        this.Quantity = Quantity;
+        this.Discount = Discount;
+        this.OrderDetailStatus = OrderDetailStatus;
+    }
+
+    public OrderDetails(int OrderID, int ProductID, double UnitPrice, int Quantity, double Discount, int OrderDetailStatus) {
         this.OrderID = OrderID;
         this.ProductID = ProductID;
         this.UnitPrice = UnitPrice;
         this.Quantity = Quantity;
         this.Discount = Discount;
-    }
-
-    public OrderDetails(int OrderID, int ProductID, double UnitPrice, int Quantity, double Discount, int OrderDetailStatus) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        this.OrderDetailStatus = OrderDetailStatus;
     }
 
     public int getOrderID() {
@@ -68,6 +74,14 @@ public class OrderDetails {
 
     public void setDiscount(double Discount) {
         this.Discount = Discount;
+    }
+
+    public int getOrderDetailStatus() {
+        return OrderDetailStatus;
+    }
+
+    public void setOrderDetailStatus(int OrderDetailStatus) {
+        this.OrderDetailStatus = OrderDetailStatus;
     }
     
     

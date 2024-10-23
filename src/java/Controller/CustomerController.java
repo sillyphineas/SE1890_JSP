@@ -14,6 +14,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.DAOCustomer;
 import entity.Customer;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.http.HttpSession;
+import java.sql.ResultSet;
 
 /**
  *
@@ -34,45 +37,42 @@ public class CustomerController extends HttpServlet {
     throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         DAOCustomer dao = new DAOCustomer();
+        HttpSession session = request.getSession(true);
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             String service = request.getParameter("service");
-
+            if (service == null) {
+                service = "listAllCustomers";
+            }
             if (service.equals("insertCustomer")) {
-                String CustomerID = request.getParameter("CustomerID");
-                String CompanyName = request.getParameter("CompanyName");
-                String ContactName = request.getParameter("ContactName");
-                String ContactTitle = request.getParameter("ContactTitle");
-                String Address = request.getParameter("Address");
-                String City = request.getParameter("City");
-                String Region = request.getParameter("Region");
-                String PostalCode = request.getParameter("PostalCode");
-                String Country = request.getParameter("Country");
-                String Phone = request.getParameter("Phone");
-                String Fax = request.getParameter("Fax");
+                
+                String submit = request.getParameter("submit");
+                if (submit == null) {
+                    ResultSet rsSup = dao.getData("select [SupplierID],[CompanyName] from [dbo].[Suppliers]");
+                    ResultSet rsCate = dao.getData("select [CategoryID],[CategoryName] from [dbo].[Categories]");
+                    request.setAttribute("rsSup", rsSup);
+                    request.setAttribute("rsCate", rsCate);
+                    RequestDispatcher rd = request.getRequestDispatcher("/jsp/insertCustomer.jsp");
+                    rd.forward(request, response);
+                } else {
+                    String CustomerID = request.getParameter("CustomerID");
+                    String CompanyName = request.getParameter("CompanyName");
+                    String ContactName = request.getParameter("ContactName");
+                    String ContactTitle = request.getParameter("ContactTitle");
+                    String Address = request.getParameter("Address");
+                    String City = request.getParameter("City");
+                    String Region = request.getParameter("Region");
+                    String PostalCode = request.getParameter("PostalCode");
+                    String Country = request.getParameter("Country");
+                    String Phone = request.getParameter("Phone");
+                    String Fax = request.getParameter("Fax");
 
-                Customer cus = new Customer(CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax);
-                int n = dao.addCCustomer(cus);
-                response.sendRedirect("CustomerURL?service=listAllCustomers");
+                    Customer cus = new Customer(CustomerID, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax);
+                    int n = dao.addCCustomer(cus);
+                    response.sendRedirect("CustomerURL?service=listAllCustomers");
+                }
             }
             if (service.equals("listAllCustomers")) {
-                out.println("<!DOCTYPE html>");
-                out.println("<html>");
-                out.println("<head>");
-                out.println("<title></title>");
-                out.println("</head>");
-                out.println("<body>");
-                out.print("""
-                      <p><a href="HTML/insertCustomer.html">insert Customer</a></p>
-                      """);
-                out.print("""
-                         <form action="CustomerURL" method="get">
-                      <p>Search Name: <input type="text" name="cusId" id="">
-                      <input type="submit" value="Search" name="submit">
-                      <input type="reset" value="Clear">
-                      <input type="hidden" name="service" value="listAllCustomers">
-                      </p>
-                          </form>""");
                 String sql = "select * from Customers";
                 String submit = request.getParameter("submit");
                 if (submit == null) { //chua nhan submit --> khong search --> sql default
@@ -82,47 +82,54 @@ public class CustomerController extends HttpServlet {
                     sql = "select * from Customers where CustomerID like '%" + cusId + "%'";
                 }
                 Vector<Customer> vector = dao.getCustomers(sql);
-                out.println("""
-                        <table border="1"> 
-                                <tr>
-                                    <th>CustomerID</th>
-                                    <th>CompanyName</th>
-                                    <th>ContactName</th>
-                                    <th>ContactTitle</th>
-                                    <th>Address</th>
-                                    <th>City</th>
-                                    <th>Region</th>
-                                    <th>PostalCode</th>
-                                    <th>Country</th>
-                                    <th>Phone</th>
-                                    <th>Fax</th>
-                                </tr>
-                        """);
-                for (Customer cus : vector) {
-                    out.print("<tr>\n"
-                            + "<td>" + cus.getCustomerID() + "</td>\n"
-                            + "<td>" + cus.getCompanyName() + "</td>\n"
-                            + "<td>" + cus.getContactName()+ "</td>\n"
-                            + "<td>" + cus.getContactTitle()+ "</td>\n"
-                            + "<td>" + cus.getAddress()+ "</td>\n"
-                            + "<td>" + cus.getCity()+ "</td>\n"
-                            + "<td>" + cus.getRegion()+ "</td>\n"
-                            + "<td>" + cus.getPostalCode()+ "</td>\n"
-                            + "<td>" + cus.getCountry()+ "</td>\n"
-                            + "<td>" + cus.getPhone()+ "</td>\n"
-                            + "<td>" + cus.getFax()+ "</td>\n"
-                            + "<td></td>\n"
-                            + "<td><a href=\"CustomerURL?service=         &pid="+cus.getCustomerID()+"\">Delete customer</a></td>\n"
-                                    
-                            + "        </tr>");
+                RequestDispatcher rd = request.getRequestDispatcher("/jsp/displayCustomer.jsp");
+                request.setAttribute("data", vector);
+                request.setAttribute("title", "Customer manager");
+                rd.forward(request, response);
+            }
+            
+            if (request.getParameter("submitLogin") != null) {
+                Vector<Customer> listCus = dao.getCustomers("select * from Customers");
+                
+                String username = request.getParameter("username");
+                String password = request.getParameter("password");
+                for (Customer account : listCus) {
+                    if (account.getPhone().equals(username) && account.getFax().equals(password)) {
+                        request.setAttribute("account", account);
+                        RequestDispatcher rd = request.getRequestDispatcher("/jsp/LoginSuccess.jsp");
+                        rd.forward(request, response);
+                    } else {
+                        
+                    }
                 }
-                out.println("</table>");
-                out.println("</body>");
-                out.println("</html>");
+
+            } else {
+                
+            }
+            
+            if (service.equals("loginCustomer")) {
+                String submit = request.getParameter("submit");
+                if (submit == null) {
+                    request.getRequestDispatcher("/jsp/LoginnCustomer.jsp").forward(request, response);
+                } else {
+                    Customer customer = dao.login(request.getParameter("username"), request.getParameter("password"));
+                    if (customer==null) {
+                        request.setAttribute("message", "login failed");
+                        request.getRequestDispatcher("/jsp/LoginnCustomer.jsp").forward(request, response);
+                    } else {
+                        //login success --> insert customer into session
+                        session.setAttribute("customer", customer);
+                        //request.getRequestDispatcher("/jsp/displayCustomer.jsp").forward(request, response);
+                        response.sendRedirect("CustomerURL?service=listAllCustomers");
+                    }
+                }
+                
+            }
+            if (service.equals("logoutCustomer")) {
+                session.invalidate();
+                response.sendRedirect("CustomerURL");
             }
         }
-
-           
     } 
 
 

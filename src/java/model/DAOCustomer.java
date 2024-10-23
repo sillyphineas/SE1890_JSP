@@ -18,6 +18,25 @@ import java.util.logging.Logger;
  * @author HP
  */
 public class DAOCustomer extends DBConnection{
+    public Customer login(String username, String pass) {
+        Customer cus = null;
+        String sql = "Select * from Customers where CustomerID=? and CompanyName=?";
+        try {
+            PreparedStatement pre = conn.prepareStatement(sql);
+            pre.setString(1, username);
+            pre.setString(2, pass);
+            ResultSet rs = pre.executeQuery();
+            if (rs.next()) {
+                cus = new Customer(rs.getString(1),rs.getString(2),
+                        rs.getString(3),rs.getString(4),rs.getString(5),
+                        rs.getString(6),rs.getString(7),rs.getString(8),
+                        rs.getString(9),rs.getString(10),rs.getString(11));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DAOCustomer.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return cus;
+    }
     public int addCCustomer(Customer cus) {
         int n = 0;
         String sql = """
@@ -171,9 +190,5 @@ public class DAOCustomer extends DBConnection{
 ////            System.out.println("Updated");
 //        }
         
-        Vector<Customer> vector = c.getCustomers("SELECT * FROM Customers");
-        for (Customer cus : vector) {
-            System.out.println(cus);
-        }
     }
 }

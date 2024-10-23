@@ -13,16 +13,16 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Vector;
-import entity.Categories;
+import entity.Region;
 import jakarta.servlet.RequestDispatcher;
-import model.DAOCategories;
+import model.DAORegion;
 
 /**
  *
  * @author HP
  */
-@WebServlet(name="CategoriesController", urlPatterns={"/CategoriesController"})
-public class CategoriesController extends HttpServlet {
+@WebServlet(name="RegionController", urlPatterns={"/RegionURL"})
+public class RegionController extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -31,59 +31,70 @@ public class CategoriesController extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        DAORegion dao = new DAORegion();
         
-        DAOCategories dao = new DAOCategories();
         try (PrintWriter out = response.getWriter()) {
+            
             String service = request.getParameter("service");
             if (service == null) {
-                service = "listAllCategories";
+                service = "listAllRegion";
             }
-
-               //Insert
-            if(service.equals("insertCategories")){
-              // get data
+            if (service.equals("deleteRegion")) {
+                dao.deleteRegion(Integer.parseInt(request.getParameter("regionID")));
+                response.sendRedirect("RegionURL?service=listAllRegion");
+                
+            }
+            
+            if(service.equals("insertRegion")){
                 String submit = request.getParameter("submit");
                 if (submit == null) {
-                    RequestDispatcher rd = request.getRequestDispatcher("/jsp/insertCategories.jsp");
+                    RequestDispatcher rd = request.getRequestDispatcher("/jsp/insertRegion.jsp");
                     rd.forward(request, response);
                 } else {
-                    String CategoryName = request.getParameter("CategoryName");
-                    String Description = request.getParameter("Description");
-                    String Picture = request.getParameter("Picture");
-                    if(CategoryName.equals("")){
-                        out.print("Category Name must not be empty");
-                    }
-                    Categories pro = new Categories(CategoryName, Description, Picture);
-                    int n = dao.addCategories(pro);
-                    response.sendRedirect("CategoriesController?service=listAllCategories");
+                    //get data
+                    String RegionID = request.getParameter("RegionID");
+                    String RegionDescription = request.getParameter("RegionDescription");
+                    String RegionStatus = request.getParameter("RegionStatus");
+
+                    //int regionID = Integer.parseInt(RegionID);
+                    int RegionStatuS = Integer.parseInt(RegionStatus);
+                    Region reg = new Region(RegionDescription, RegionStatuS) ;
+                    int n = dao.addRegion(reg);
+                    response.sendRedirect("RegionURL?service=listAllRegion");
                 }
-             
+               
             }
-            if(service.equals("listAllCategories")){
-                String sql = "SELECT * FROM Categories";
+            if(service.equals("listAllRegion")){
+                String sql = "SELECT * FROM Region";
                 String submit = request.getParameter("submit");
                 if (submit == null) {
-                    sql = "select * from Categories";
-
+                    sql = "SELECT * FROM Region";
                 } else {
-                    String pname = request.getParameter("Category");
-                    sql = "SELECT *\n"
-                            + "  FROM [dbo].[Categories]\n"
-                            + "  where CategoryName like '%" +pname+ "%'";
+                    String rname = request.getParameter("rname");
+                    sql = "  SELECT * FROM Region\n"
+                            + "  where RegionDescription like '%" + rname + "%'";
                 }
-                Vector<Categories> vector = dao.getCategories(sql);
-                RequestDispatcher rd = request.getRequestDispatcher("/jsp/displayCategories.jsp");
+                Vector<Region> vector = dao.getRegion(sql);
+                RequestDispatcher rd = request.getRequestDispatcher("/jsp/displayRegion.jsp");
                 //set data
                 request.setAttribute("data", vector);
-                request.setAttribute("title", "Categories manager");
+                request.setAttribute("title", "Region manager");
                 rd.forward(request, response);
+                }
             }
         }
-    }
-
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.
@@ -119,5 +130,4 @@ public class CategoriesController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }

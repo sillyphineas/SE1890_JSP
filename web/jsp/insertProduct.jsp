@@ -21,7 +21,7 @@
             <input type="hidden" name="service" value="insertProduct"/>
         <table>
             <caption>Insert Product</caption>
-            <tr>
+            <tr> 
                 <td><label for="ProductID">Product</label></td>
                 <td><input type="text" name="ProductID" id="ProductID" readonly></td>
             </tr>
